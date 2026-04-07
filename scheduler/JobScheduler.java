@@ -1,58 +1,45 @@
 package scheduler;
 
-import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.PriorityQueue;
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.DelayQueue;
 
 public class JobScheduler {
-    private final PriorityQueue<Job> jobList;
+    private final DelayQueue<Job> jobList;
+    private Map<Integer, Job> jobs;
 
     public JobScheduler() {
-        this.jobList = new PriorityQueue<>(new JobComparator());
+        this.jobList = new DelayQueue<>();
+        this.jobs = new HashMap<>();
 
     }
 
-    public synchronized void addJob(Job a) throws RuntimeException {
-        if (jobList.contains(a)) {
+    public synchronized void addJob(Job job) throws RuntimeException {
+        if (jobs.get(job.getJobId()) != null) {
             throw new RuntimeException("Job exists");
         }
 
-        jobList.add(a);
-        
+        jobList.add(job);
+        jobs.put(job.getJobId(), job);
+
         // System.out.println(jobList.size());
 
     }
 
-    public  void scheduleJob() {
+    public synchronized void scheduleJob() {
         while (!jobList.isEmpty()) {
-            synchronized(this){
-                Job job = jobList.peek();
-                if (job.getStartTime().isBefore(LocalDateTime.now())) {
-                    // System.out.println("jobId " + job.getJobId());
-
-                    jobList.poll();
-                    job.jobExecutionProcess();
-                } 
-                
+            try{
+                Job job = jobList.take();
+            jobs.remove(job.getJobId());
+            job.jobExecutionProcess();
             }
+            catch(InterruptedException e){
+                System.err.println("error "+e.getMessage());
+            }
+            
 
         }
     }
 }
 
-class JobComparator implements Comparator<Job> {
 
-    @Override
-    public int compare(Job o1, Job o2) {
-        if (o1.getStartTime().isBefore(o2.getStartTime())) {
-            return -1;
-        }
-        else if (o1.getStartTime().isEqual(o2.getStartTime())) {
-            return Integer.compare(o1.getJobId(), o2.getJobId());
-        }
-        else
-        return 1;
-    }
-
-}
