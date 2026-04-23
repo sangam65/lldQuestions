@@ -4,7 +4,8 @@ import java.time.LocalDateTime;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+
+
 
 public class Main {
     public static void main(String []args){
@@ -16,15 +17,17 @@ public class Main {
         try{
              executorService.submit(()->{
              jobScheduler.scheduleJob();
+              jobScheduler.addJob(new Job(LocalDateTime.of(2026, 3, 26,20, 38), 4));
+        // executorService.s
         });
+        
          
         }
         finally{
-            //  executorService.awaitTermination(2000, TimeUnit.MILLISECONDS);
+             executorService.close();
         }
        
-        jobScheduler.addJob(new Job(LocalDateTime.of(2026, 3, 26,20, 38), 4));
-        // executorService.s
+       
         
 
 
