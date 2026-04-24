@@ -8,7 +8,7 @@ import ElevatorSystem.enums.Direction;
 
 public class Elevator {
     private Floor currentFloor;
-    private Floor nextFloor;
+
     private final char elevatorId;
 
     public char getElevatorId() {
@@ -23,9 +23,7 @@ public class Elevator {
         return currentFloor;
     }
 
-    public Floor getNextFloor() {
-        return nextFloor;
-    }
+   
 
     public Direction getDirection() {
         return direction;
@@ -39,7 +37,6 @@ public class Elevator {
         this.elevatorId = elevatorId;
         this.floors = new PriorityQueue<>((Floor a, Floor b) -> a.getFloorNumber() - b.getFloorNumber());
         this.currentFloor = currentFloor;
-        this.nextFloor = null;
         this.direction = Direction.IDLE;
         this.pendingFloors = new LinkedList<>();
     }
@@ -64,8 +61,11 @@ public class Elevator {
     // @Scheduled
     public void step() {
         if (floors.isEmpty()) {
-            if (pendingFloors.isEmpty())
-                return;
+            if (pendingFloors.isEmpty()){
+                this.direction=Direction.IDLE;
+                 return;
+            }
+               
             this.direction = (this.direction == Direction.DOWN) ? Direction.UP : Direction.DOWN;
             changeFloorOrdering();
             while (!pendingFloors.isEmpty()) {
@@ -90,8 +90,9 @@ public class Elevator {
     private void changeFloorOrdering() {
         this.floors = new PriorityQueue<>(
                 !direction.equals(Direction.UP)
-                        ? (a, b) -> a.getFloorNumber() - b.getFloorNumber()
-                        : (a, b) -> b.getFloorNumber() - a.getFloorNumber());
+                        ? (a, b) -> b.getFloorNumber() - a.getFloorNumber()
+                       : (a, b) -> a.getFloorNumber() - b.getFloorNumber());
+                        // : (a, b) -> b.getFloorNumber() - a.getFloorNumber());
     }
 
 }
