@@ -1,9 +1,8 @@
 package ElevatorSystem.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
-import java.util.TreeSet;
+import java.util.Queue;
 
 import ElevatorSystem.enums.Direction;
 
@@ -18,6 +17,7 @@ public class Elevator {
 
     private Direction direction;
     private PriorityQueue<Floor> floors;
+    private Queue<Floor> pendingFloors;
 
     public Floor getCurrentFloor() {
         return currentFloor;
@@ -41,26 +41,38 @@ public class Elevator {
         this.currentFloor = currentFloor;
         this.nextFloor = null;
         this.direction = Direction.IDLE;
+        this.pendingFloors = new LinkedList<>();
     }
 
     public void addFloor(Floor currentFloor, Floor destFloor, Direction direction) {
         if (this.direction.equals(Direction.IDLE)) {
             this.direction = direction;
-            this.floors = new PriorityQueue<>(
-                    direction.equals(Direction.UP)
-                            ? (a, b) -> a.getFloorNumber() - b.getFloorNumber()
-                            : (a, b) -> b.getFloorNumber() - a.getFloorNumber());
+            changeFloorOrdering();
+            this.floors.add(currentFloor);
+            this.floors.add(destFloor);
+        } else if (this.direction != direction) {
+            this.pendingFloors.add(destFloor);
+            this.pendingFloors.add(currentFloor);
+        } else {
+            this.floors.add(currentFloor);
+            this.floors.add(destFloor);
         }
-        this.floors.add(currentFloor);
-        this.floors.add(destFloor);
 
     }
 
     // will be scheduled or async
     // @Scheduled
     public void step() {
-        if (floors.isEmpty())
-            return;
+        if (floors.isEmpty()) {
+            if (pendingFloors.isEmpty())
+                return;
+            this.direction = (this.direction == Direction.DOWN) ? Direction.UP : Direction.DOWN;
+            changeFloorOrdering();
+            while (!pendingFloors.isEmpty()) {
+                this.floors.add(pendingFloors.poll());
+            }
+
+        }
 
         this.currentFloor = this.floors.poll();
 
@@ -73,6 +85,13 @@ public class Elevator {
         System.out.println("Elevator " + elevatorId +
                 " at floor " + currentFloor.getFloorNumber() +
                 " direction: " + direction);
+    }
+
+    private void changeFloorOrdering() {
+        this.floors = new PriorityQueue<>(
+                !direction.equals(Direction.UP)
+                        ? (a, b) -> a.getFloorNumber() - b.getFloorNumber()
+                        : (a, b) -> b.getFloorNumber() - a.getFloorNumber());
     }
 
 }
