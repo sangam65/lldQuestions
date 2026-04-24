@@ -1,6 +1,7 @@
 package ElevatorSystem.entities;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ElevatorSystem.elevatorStrategy.ElevatorStrategy;
@@ -30,8 +31,12 @@ public class Building {
     public synchronized void setElevatorStrategy(ElevatorStrategy elevatorStrategy) {
         this.elevatorStrategy = elevatorStrategy;
     }
-    public synchronized Elevator goToFloor(Floor floor){
-        Elevator elevator= elevatorStrategy.findElevator(elevators.values().stream().toList(), floor);
+    public synchronized Elevator goToFloor(Floor floor)throws ElevatorException{
+        List<Elevator>elevatorList=elevators.values().stream().toList();
+        if(elevatorList==null){
+            throw new ElevatorException("Elevator not added in building");
+        }
+        Elevator elevator= elevatorStrategy.findElevator(elevatorList, floor);
         if(elevator==null){
             throw new ElevatorException("No elevator available");
         }

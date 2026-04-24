@@ -16,7 +16,7 @@ public class LookUpElevatorStrategy implements ElevatorStrategy{
         // First, prefer elevators that are above the floor and not going up (idle or down)
         for (Elevator elevator : elevators) {
             if (elevator.getCurrentFloor().getFloorNumber() > floor.getFloorNumber()) {
-                if (!elevator.getDirection().equals(Direction.UP)) {
+                if (elevator.getDirection().equals(Direction.UP)) {
                     int distance = elevator.getCurrentFloor().getFloorNumber() - floor.getFloorNumber();
                     if (distance < minDistance) {
                         minDistance = distance;
