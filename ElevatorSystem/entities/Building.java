@@ -61,7 +61,7 @@ public class Building {
         if(elevator==null){
             throw new ElevatorException("No elevator available");
         }
-        elevator.addFloor(currentFloor,destinationFloor);
+        elevator.addFloor(currentFloor,destinationFloor,direction);
         return elevator;
     }
 

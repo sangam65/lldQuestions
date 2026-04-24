@@ -37,9 +37,18 @@ public class Elevator {
         this.nextFloor=null;
         this.direction=Direction.IDLE;
     }
-    public void addFloor(Floor currentFloor,Floor destFloor){
+    public void addFloor(Floor currentFloor,Floor destFloor,Direction direction){
         if(nextFloor==null){
             this.nextFloor=currentFloor;
+            this.direction=direction;
+            if(this.direction.equals(Direction.UP)){
+                 this.floors = new PriorityQueue<>((a,b) -> a.getFloorNumber() - b.getFloorNumber()); // min-heap ✅
+
+            }
+            else{
+                 this.floors = new PriorityQueue<>((a,b) -> b.getFloorNumber() - a.getFloorNumber()); // max-heap ✅
+
+            }
         }
         this.floors.add(currentFloor);
         this.floors.add(destFloor);
@@ -51,15 +60,8 @@ public class Elevator {
         this.floors.remove();
         if(this.floors.isEmpty()){
            this.nextFloor=null; 
-           if(this.direction.equals(Direction.UP)){
-                this.direction=Direction.DOWN;
-                this.floors=new PriorityQueue<>((Floor a,Floor b)->b.getFloorNumber()-a.getFloorNumber());
-
-           }
-           else{
-             this.direction=Direction.UP;
-                this.floors=new PriorityQueue<>((Floor a,Floor b)->a.getFloorNumber()-b.getFloorNumber());
-           }
+           
+           this.direction=Direction.IDLE;
         }
         else{
             this.nextFloor=this.floors.poll();
@@ -71,26 +73,4 @@ public class Elevator {
     
 
 
-}
-
-
-class FloorDir{
-    private Floor floor;
-    private Direction direction;
-    public FloorDir(Floor floor, Direction direction) {
-        this.floor = floor;
-        this.direction = direction;
-    }
-    public Floor getFloor() {
-        return floor;
-    }
-    public void setFloor(Floor floor) {
-        this.floor = floor;
-    }
-    public Direction getDirection() {
-        return direction;
-    }
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
 }
