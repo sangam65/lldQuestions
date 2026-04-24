@@ -45,6 +45,7 @@ public class Elevator {
         this.floors.add(destFloor);
         moveElevator();
     }
+    // will be scheduled or async
     private void moveElevator(){
         this.currentFloor=this.nextFloor;
         this.floors.remove();
