@@ -4,7 +4,8 @@ import java.util.List;
 
 import ElevatorSystem.entities.Elevator;
 import ElevatorSystem.entities.Floor;
+import ElevatorSystem.enums.Direction;
 
 public interface ElevatorStrategy {
-    Elevator findElevator(List<Elevator>elevators,Floor floor);
+    Elevator findElevator(List<Elevator>elevators,Floor cuurentFloor,Floor destinationFloor,Direction direction);
 }

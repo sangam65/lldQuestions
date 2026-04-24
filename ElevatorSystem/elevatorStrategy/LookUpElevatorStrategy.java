@@ -9,15 +9,15 @@ import ElevatorSystem.enums.Direction;
 public class LookUpElevatorStrategy implements ElevatorStrategy{
 
     @Override
-    public Elevator findElevator(List<Elevator> elevators, Floor floor) {
+    public Elevator findElevator(List<Elevator> elevators,Floor cuurentFloor,Floor destinationFloor,Direction direction){
         Elevator bestElevator = null;
         int minDistance = Integer.MAX_VALUE;
         
         // First, prefer elevators that are above the floor and not going up (idle or down)
         for (Elevator elevator : elevators) {
-            if (elevator.getCurrentFloor().getFloorNumber() > floor.getFloorNumber()) {
+            if (elevator.getCurrentFloor().getFloorNumber() > cuurentFloor.getFloorNumber()) {
                 if (elevator.getDirection().equals(Direction.UP)) {
-                    int distance = elevator.getCurrentFloor().getFloorNumber() - floor.getFloorNumber();
+                    int distance = elevator.getCurrentFloor().getFloorNumber() - cuurentFloor.getFloorNumber();
                     if (distance < minDistance) {
                         minDistance = distance;
                         bestElevator = elevator;
@@ -30,7 +30,7 @@ public class LookUpElevatorStrategy implements ElevatorStrategy{
         if (bestElevator == null) {
             minDistance = Integer.MAX_VALUE;
             for (Elevator elevator : elevators) {
-                int distance = Math.abs(elevator.getCurrentFloor().getFloorNumber() - floor.getFloorNumber());
+                int distance = Math.abs(elevator.getCurrentFloor().getFloorNumber() - cuurentFloor.getFloorNumber());
                 if (distance < minDistance) {
                     minDistance = distance;
                     bestElevator = elevator;

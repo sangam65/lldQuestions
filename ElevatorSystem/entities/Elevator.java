@@ -36,8 +36,26 @@ public class Elevator {
         this.direction=Direction.IDLE;
     }
     public void addFloor(Floor floor){
+        if(nextFloor==null){
+            this.nextFloor=floor;
+        }
         this.floors.add(floor);
+        moveElevator();
     }
+    private void moveElevator(){
+        this.currentFloor=this.nextFloor;
+        this.floors.remove(0);
+        if(this.floors.isEmpty()){
+           this.nextFloor=null; 
+           this.direction=Direction.IDLE;
+        }
+        else{
+            this.nextFloor=this.floors.get(0);
+
+        }
+
+    }
+    
 
 
 }
